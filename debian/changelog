@@ -1,3 +1,9 @@
+libsodium (0.7.1-1~deb7u+1) stable; urgency=medium
+
+  * Backport for Wheezy
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Tue, 23 Sep 2014 18:51:14 +0000
+
 libsodium (0.7.1-1) unstable; urgency=medium
 
   * Initial release
