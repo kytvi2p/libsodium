@@ -3,7 +3,7 @@ Maintainer: Kill Your TV <killyourtv@i2pmail.org>
 Section: misc
 Priority: optional
 Standards-Version: 3.9.5
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 9), dh-autoreconf
 
 Package: libsodium13
 Architecture: any
