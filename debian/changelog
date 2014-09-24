@@ -1,3 +1,9 @@
+libsodium (1.0.0-1ubuntu1~precise1) precise; urgency=medium
+
+  * Upload to Precise PPA
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Wed, 24 Sep 2014 11:17:10 +0000
+
 libsodium (1.0.0-1ubuntu1) trusty; urgency=medium
 
   * Initial upload to PPA
