@@ -1059,6 +1059,7 @@ int main(void)
     unsigned int i;
     unsigned int j;
 
+    memset(sig, 0, sizeof sig);
     for (i = 0U; i < (sizeof test_data) / (sizeof test_data[0]); i++) {
         memcpy(skpk, test_data[i].sk, crypto_sign_SEEDBYTES);
         memcpy(skpk + crypto_sign_SEEDBYTES, test_data[i].pk,
@@ -1115,6 +1116,18 @@ int main(void)
     printf("%u tests\n", i);
 
     i--;
+
+    memcpy(sm, test_data[i].m, i);
+    if (crypto_sign(sm, &smlen, sm, i, skpk) != 0) {
+        printf("crypto_sign() with overlap failed\n");
+    }
+    if (crypto_sign_open(sm, &mlen, sm, smlen, test_data[i].pk) != 0) {
+        printf("crypto_sign_open() with overlap failed\n");
+    }
+    if (memcmp(test_data[i].m, sm, (size_t)mlen) != 0) {
+        printf("crypto_sign_open() with overlap failed (content)\n");
+    }
+
     for (j = 1U; j < 8U; j++) {
         sig[63] ^= (j << 5);
         if (crypto_sign_verify_detached(sig,
