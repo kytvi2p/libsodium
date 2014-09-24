@@ -1,3 +1,9 @@
+libsodium (1.0.0-1) unstable; urgency=medium
+
+  * New upstream release
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Wed, 24 Sep 2014 09:56:43 +0000
+
 libsodium (0.7.1-1~deb6u+1) oldstable; urgency=medium
 
   * Backport to Squeeze
