@@ -1,3 +1,9 @@
+libsodium (1.0.0-2) unstable; urgency=medium
+
+  * Add debugging package (fixes #1)
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Fri, 26 Sep 2014 11:03:48 +0000
+
 libsodium (1.0.0-1) unstable; urgency=medium
 
   * New upstream release
