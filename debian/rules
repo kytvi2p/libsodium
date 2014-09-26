@@ -1,3 +1,9 @@
 #!/usr/bin/make -f
+
+CFLAGS += -g
+
 %:
 	dh $@ --with autoreconf
+
+override_dh_strip:
+	dh_strip --dbg-package=libsodium-dbg
