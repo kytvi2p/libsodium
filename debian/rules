@@ -7,6 +7,3 @@ CFLAGS += -g
 
 override_dh_strip:
 	dh_strip --dbg-package=libsodium-dbg
-
-override_dh_installdocs:
-	dh_installdocs -plibsodium-dev -plibsodium-dbg --link-doc=libsodium13
