@@ -1,3 +1,9 @@
+libsodium (1.0.0+20141004.1-1~deb6u+1) oldstable; urgency=medium
+
+  * Backport to Squeeze
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Sat, 04 Oct 2014 23:46:09 +0000
+
 libsodium (1.0.0+20141004.1-1) unstable; urgency=medium
 
   [ Frank Denis ]
@@ -22,23 +28,11 @@ libsodium (1.0.0-2) unstable; urgency=medium
 
  -- Kill Your TV <killyourtv@i2pmail.org>  Fri, 26 Sep 2014 11:03:48 +0000
 
-libsodium (1.0.0-1~deb6u+1) oldstable; urgency=medium
-
-  * Backport to Squeeze
-
- -- Kill Your TV <killyourtv@i2pmail.org>  Wed, 24 Sep 2014 10:06:07 +0000
-
 libsodium (1.0.0-1) unstable; urgency=medium
 
   * New upstream release
 
  -- Kill Your TV <killyourtv@i2pmail.org>  Wed, 24 Sep 2014 09:56:43 +0000
-
-libsodium (0.7.1-1~deb6u+1) oldstable; urgency=medium
-
-  * Backport to Squeeze
-
- -- Kill Your TV <killyourtv@i2pmail.org>  Tue, 23 Sep 2014 19:16:22 +0000
 
 libsodium (0.7.1-1) unstable; urgency=medium
 
