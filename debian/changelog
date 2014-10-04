@@ -1,3 +1,20 @@
+libsodium (1.0.0+20141004.1-1) unstable; urgency=medium
+
+  [ Frank Denis ]
+  * SODIUM_VERSION_STRING should be the package version even on Visual Studio
+  * ed25519_open(): check that S < l Not strictly required, but I don't see
+    any downsides either.
+  * Support overlapping input and output regions in
+    crypto_secretbox_detached() crypto_stream_salsa20() doesn't support
+    overlapping input and output regions, except when they are aliases.
+
+  [ Kill Your TV ]
+  * New upstream git snapshot (mostly packaging to get the fix for
+    https://github.com/jedisct1/libsodium/issues/196)
+  * Update debian/copyright as per file headers
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Sat, 04 Oct 2014 20:13:37 +0000
+
 libsodium (1.0.0-2ubuntu1) trusty; urgency=medium
 
   * Upload to PPA
