@@ -1,3 +1,9 @@
+libsodium (1.0.0+20141004.1-1ubuntu1) trusty; urgency=medium
+
+  * Upload to PPA
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Sat, 04 Oct 2014 21:17:47 +0000
+
 libsodium (1.0.0+20141004.1-1) unstable; urgency=medium
 
   [ Frank Denis ]
@@ -14,12 +20,6 @@ libsodium (1.0.0+20141004.1-1) unstable; urgency=medium
   * Update debian/copyright as per file headers
 
  -- Kill Your TV <killyourtv@i2pmail.org>  Sat, 04 Oct 2014 20:13:37 +0000
-
-libsodium (1.0.0-2ubuntu1) trusty; urgency=medium
-
-  * Upload to PPA
-
- -- Kill Your TV <killyourtv@i2pmail.org>  Fri, 26 Sep 2014 12:39:22 +0000
 
 libsodium (1.0.0-2) unstable; urgency=medium
 
