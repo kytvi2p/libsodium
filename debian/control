@@ -4,11 +4,12 @@ Section: misc
 Priority: optional
 Standards-Version: 3.9.5
 Build-Depends: debhelper (>= 8), dh-autoreconf
+Homepage: https://libsodium.org
 
 Package: libsodium13
+Multi-Arch: same
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Homepage: https://libsodium.org
 Description: sodium crypto library
  Sodium is a modern, easy-to-use software library for encryption, decryption,
  signatures, password hashing and more.
@@ -22,8 +23,8 @@ Description: sodium crypto library
 Package: libsodium-dev
 Section: libdevel
 Architecture: any
+Multi-Arch: same
 Depends: libsodium13 (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
-Homepage: https://libsodium.org
 Description: sodium crypto library development files
  Sodium is a modern, easy-to-use software library for encryption, decryption,
  signatures, password hashing and more.
@@ -35,3 +36,21 @@ Description: sodium crypto library development files
  cryptographic tools.
  .
  This package contains the development libraries.
+
+Package: libsodium-dbg
+Section: debug
+Multi-Arch: same
+Priority: extra
+Architecture: any
+Depends: libsodium13 (= ${binary:Version}), ${misc:Depends}
+Description: sodium crypto library debugging symbols
+ Sodium is a modern, easy-to-use software library for encryption, decryption,
+ signatures, password hashing and more.
+ .
+ It is a portable, cross-compilable, installable, packageable fork of NaCl,
+ with a compatible API, and an extended API to improve usability even further.
+ .
+ Its goal is to provide all of the core operations needed to build higher-level
+ cryptographic tools.
+ .
+ This package contains the debugging symbols for libsodium13.
