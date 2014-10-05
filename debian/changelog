@@ -1,3 +1,21 @@
+libsodium (1.0.0+20141005.1-1) unstable; urgency=medium
+
+  [ Frank Denis ]
+  * and -> and/or
+  * SODIUM_VERSION_STRING should be the package version even on Visual Studio
+  * ed25519_open(): check that S < l Not strictly required, but I don't see any downsides either.
+  * Support overlapping input and output regions in crypto_secretbox_detached() crypto_stream_salsa20() doesn't support overlapping input and output regions, except when they are aliases.
+  * Add a test for ed25519 malleability and restore traditional behavior.
+  * Avoid a conditional jump
+  * Test box_easy with overlapping in/out.
+  * Add a test for chacha20poly1305 with overlapping pointers
+  * Remove dead variable and assignment
+
+  [ Kill Your TV ]
+  * New git upstream snapshot
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Sun, 05 Oct 2014 18:01:56 +0000
+
 libsodium (1.0.0-2) unstable; urgency=medium
 
   * Add debugging package (fixes GH #1)
