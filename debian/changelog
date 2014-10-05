@@ -1,3 +1,9 @@
+libsodium (1.0.0+20141005.1-1~precise1) precise; urgency=medium
+
+  * Upload to PPA
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Sun, 05 Oct 2014 22:43:12 +0000
+
 libsodium (1.0.0+20141005.1-1) unstable; urgency=medium
 
   [ Frank Denis ]
@@ -15,12 +21,6 @@ libsodium (1.0.0+20141005.1-1) unstable; urgency=medium
   * New git upstream snapshot
 
  -- Kill Your TV <killyourtv@i2pmail.org>  Sun, 05 Oct 2014 18:01:56 +0000
-
-libsodium (1.0.0+20141004.1-1~precise1) precise; urgency=medium
-
-  * Upload to PPA
-
- -- Kill Your TV <killyourtv@i2pmail.org>  Sat, 04 Oct 2014 21:19:13 +0000
 
 libsodium (1.0.0+20141004.1-1) unstable; urgency=medium
 
