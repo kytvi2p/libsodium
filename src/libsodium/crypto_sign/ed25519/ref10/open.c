@@ -9,14 +9,15 @@
 #include "sc.h"
 #include "utils.h"
 
+#ifdef ED25519_PREVENT_MALLEABILITY
 static int
 crypto_sign_check_S_lt_l(const unsigned char *S)
 {
     static const unsigned char l[32] =
-      { 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      { 0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58,
+        0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x14, 0xde, 0xf9, 0xde, 0xa2, 0xf7, 0x9c, 0xd6,
-        0x58, 0x12, 0x63, 0x1a, 0x5c, 0xf5, 0xd3, 0xed };
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 };
     unsigned char c = 0;
     unsigned char n = 1;
     unsigned int  i = 32;
@@ -27,8 +28,9 @@ crypto_sign_check_S_lt_l(const unsigned char *S)
         n &= ((S[i] ^ l[i]) - 1) >> 8;
     } while (i != 0);
 
-    return -(c == 0);
+    return ((int) c) - 1;
 }
+#endif
 
 int
 crypto_sign_verify_detached(const unsigned char *sig, const unsigned char *m,
@@ -42,9 +44,15 @@ crypto_sign_verify_detached(const unsigned char *sig, const unsigned char *m,
     ge_p3 A;
     ge_p2 R;
 
+#ifdef ED25519_PREVENT_MALLEABILITY
     if (crypto_sign_check_S_lt_l(sig + 32) != 0) {
         return -1;
     }
+#else
+    if (sig[63] & 224) {
+        return -1;
+    }
+#endif
     if (ge_frombytes_negate_vartime(&A, pk) != 0) {
         return -1;
     }
