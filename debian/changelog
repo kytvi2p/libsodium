@@ -1,3 +1,9 @@
+libsodium (1.0.0+20141005.1-2) UNRELEASED; urgency=medium
+
+  * Update debian/copyright per file headers
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Mon, 06 Oct 2014 01:11:05 +0000
+
 libsodium (1.0.0+20141005.1-1) unstable; urgency=medium
 
   [ Frank Denis ]
