@@ -47,7 +47,7 @@ static unsigned char canary[CANARY_SIZE];
 
 #ifdef HAVE_WEAK_SYMBOLS
 __attribute__((weak)) void
-__sodium_dummy_symbol_to_prevent_lto(void * const pnt, const size_t len)
+_sodium_dummy_symbol_to_prevent_lto(void * const pnt, const size_t len)
 {
     (void) pnt;
     (void) len;
@@ -67,7 +67,7 @@ sodium_memzero(void * const pnt, const size_t len)
     explicit_bzero(pnt, len);
 #elif HAVE_WEAK_SYMBOLS
     memset(pnt, 0, len);
-    __sodium_dummy_symbol_to_prevent_lto(pnt, len);
+    _sodium_dummy_symbol_to_prevent_lto(pnt, len);
 #else
     volatile unsigned char *pnt_ = (volatile unsigned char *) pnt;
     size_t                     i = (size_t) 0U;
@@ -96,22 +96,25 @@ char *
 sodium_bin2hex(char * const hex, const size_t hex_maxlen,
                const unsigned char * const bin, const size_t bin_len)
 {
-    static const char hexdigits[16] = {
-        '0', '1', '2', '3', '4', '5', '6', '7',
-        '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
-    };
-    size_t            i = (size_t) 0U;
-    size_t            j = (size_t) 0U;
+    size_t       i = (size_t) 0U;
+    unsigned int x;
+    int          b;
+    int          c;
 
     if (bin_len >= SIZE_MAX / 2 || hex_maxlen < bin_len * 2U) {
         abort(); /* LCOV_EXCL_LINE */
     }
     while (i < bin_len) {
-        hex[j++] = hexdigits[bin[i] >> 4];
-        hex[j++] = hexdigits[bin[i] & 0xf];
+        c = bin[i] & 0xf;
+        b = bin[i] >> 4;
+        x = (unsigned char) (87 + c + (((c - 10) >> 31) & -39)) << 8 |
+            (unsigned char) (87 + b + (((b - 10) >> 31) & -39));
+        hex[i * 2U] = (char) x;
+        x >>= 8;
+        hex[i * 2U + 1U] = (char) x;
         i++;
     }
-    hex[j] = 0;
+    hex[i * 2U] = 0;
 
     return hex;
 }

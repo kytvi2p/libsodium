@@ -1,3 +1,22 @@
+libsodium (1.0.1-1) unstable; urgency=medium
+
+
+  [ Frank Denis ]
+  * Remove S<l check. Plan is to add is_standard()/is_canonical() instead of
+    changing the current behavior of the verification function. Suggested by
+    CodesInChaos.
+  * Make include guards consistent, and avoid reserved identifiers.
+  * Constant-time sodium_bin2hex() Original C# code by CodesInChaos.
+  * Make sodium_bin2hex() slightly faster
+  * Version bump
+
+  [ Kill Your TV ]
+  * Update debian/copyright per file headers
+  * New upstream release
+  * Bump standards version, no source changes needed.
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Sat, 11 Oct 2014 22:05:30 +0000
+
 libsodium (1.0.0+20141005.1-1~deb6u+1) oldstable; urgency=medium
 
   * Backport to Squeeze
@@ -9,8 +28,11 @@ libsodium (1.0.0+20141005.1-1) unstable; urgency=medium
   [ Frank Denis ]
   * and -> and/or
   * SODIUM_VERSION_STRING should be the package version even on Visual Studio
-  * ed25519_open(): check that S < l Not strictly required, but I don't see any downsides either.
-  * Support overlapping input and output regions in crypto_secretbox_detached() crypto_stream_salsa20() doesn't support overlapping input and output regions, except when they are aliases.
+  * ed25519_open(): check that S < l Not strictly required, but I don't see
+    any downsides either.
+  * Support overlapping input and output regions in
+    crypto_secretbox_detached() crypto_stream_salsa20() doesn't support
+    overlapping input and output regions, except when they are aliases.
   * Add a test for ed25519 malleability and restore traditional behavior.
   * Avoid a conditional jump
   * Test box_easy with overlapping in/out.
