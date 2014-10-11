@@ -1,3 +1,9 @@
+libsodium (1.0.1-1~precise+1) precise; urgency=medium
+
+  * Upload to PPA
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Sat, 11 Oct 2014 22:21:05 +0000
+
 libsodium (1.0.1-1) unstable; urgency=medium
 
 
@@ -16,12 +22,6 @@ libsodium (1.0.1-1) unstable; urgency=medium
   * Bump standards version, no source changes needed.
 
  -- Kill Your TV <killyourtv@i2pmail.org>  Sat, 11 Oct 2014 22:05:30 +0000
-
-libsodium (1.0.0+20141005.1-1~precise1) precise; urgency=medium
-
-  * Upload to PPA
-
- -- Kill Your TV <killyourtv@i2pmail.org>  Sun, 05 Oct 2014 22:43:12 +0000
 
 libsodium (1.0.0+20141005.1-1) unstable; urgency=medium
 
