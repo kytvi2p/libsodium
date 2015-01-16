@@ -1,4 +1,34 @@
 
+* Version 1.0.2
+ - The _easy and _detached APIs now support precalculated keys;
+crypto_box_easy_afternm(), crypto_box_open_easy_afternm(),
+crypto_box_detached_afternm() and crypto_box_open_detached_afternm()
+have been added as an alternative to the NaCl interface.
+ - Memory allocation functions can now be used on Operating systems with
+no memory protection.
+ - crypto_sign_open() and crypto_sign_edwards25519sha512batch_open()
+now accept a NULL pointer instead of a pointer to the message size, if
+storing this information is not required.
+ - The close-on-exec flag is now set on the descriptor returned when
+opening /dev/urandom.
+ - A libsodium-uninstalled.pc file to use pkg-config even when
+libsodium is not installed, has been added.
+ - The iOS target now includes armv7s and arm64 optimized code, as well
+as i386 and x86_64 code for the iOS simulator.
+ - sodium_free() can now be called on regions with PROT_NONE protection.
+ - The Javascript tests can run on Ubuntu, where the node binary was
+renamed nodejs. io.js can also be used instead of node.
+
+* Version 1.0.1
+ - DLL_EXPORT was renamed SODIUM_DLL_EXPORT in order to avoid
+collisions with similar macros defined by other libraries.
+ - sodium_bin2hex() is now constant-time.
+ - crypto_secretbox_detached() now supports overlapping input and output
+regions.
+ - NaCl's donna_c64 implementation of curve25519 was reading an extra byte
+past the end of the buffer containing the base point. This has been
+fixed.
+
 * Version 1.0.0
  - The API and ABI are now stable. New features will be added, but
 backward-compatibility is guaranteed through all the 1.x.y releases.

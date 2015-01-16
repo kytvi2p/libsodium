@@ -32,7 +32,7 @@
 #if !defined(MAP_ANON) && defined(MAP_ANONYMOUS)
 # define MAP_ANON MAP_ANONYMOUS
 #endif
-#if defined(_WIN32) || defined(MAP_ANON) || defined(HAVE_POSIX_MEMALIGN)
+#if defined(_WIN32) || (defined(MAP_ANON) && defined(HAVE_MMAP)) || defined(HAVE_POSIX_MEMALIGN)
 # define HAVE_ALIGNED_MALLOC
 #endif
 #if defined(HAVE_MPROTECT) && !(defined(PROT_NONE) && defined(PROT_READ) && defined(PROT_WRITE))
@@ -92,6 +92,7 @@ sodium_memcmp(const void * const b1_, const void * const b2_, size_t len)
     return (int) ((1 & ((d - 1) >> 8)) - 1);
 }
 
+/* Derived from original code by CodesInChaos */
 char *
 sodium_bin2hex(char * const hex, const size_t hex_maxlen,
                const unsigned char * const bin, const size_t bin_len)
@@ -172,9 +173,32 @@ sodium_hex2bin(unsigned char * const bin, const size_t bin_maxlen,
 }
 
 int
+_sodium_alloc_init(void)
+{
+#ifdef HAVE_ALIGNED_MALLOC
+# if defined(_SC_PAGESIZE)
+    long page_size_ = sysconf(_SC_PAGESIZE);
+    if (page_size_ > 0L) {
+        page_size = (size_t) page_size_;
+    }
+# elif defined(_WIN32)
+    SYSTEM_INFO si;
+    GetSystemInfo(&si);
+    page_size = (size_t) si.dwPageSize;
+# endif
+    if (page_size < CANARY_SIZE || page_size < sizeof(size_t)) {
+        abort(); /* LCOV_EXCL_LINE */
+    }
+#endif
+    randombytes_buf(canary, sizeof canary);
+
+    return 0;
+}
+
+int
 sodium_mlock(void * const addr, const size_t len)
 {
-#ifdef MADV_DONTDUMP
+#if defined(MADV_DONTDUMP) && defined(HAVE_MADVISE)
     (void) madvise(addr, len, MADV_DONTDUMP);
 #endif
 #ifdef HAVE_MLOCK
@@ -191,7 +215,7 @@ int
 sodium_munlock(void * const addr, const size_t len)
 {
     sodium_memzero(addr, len);
-#ifdef MADV_DODUMP
+#if defined(MADV_DODUMP) && defined(HAVE_MADVISE)
     (void) madvise(addr, len, MADV_DODUMP);
 #endif
 #ifdef HAVE_MLOCK
@@ -204,45 +228,14 @@ sodium_munlock(void * const addr, const size_t len)
 #endif
 }
 
-int
-_sodium_alloc_init(void)
-{
-#if defined(_SC_PAGESIZE)
-    long page_size_ = sysconf(_SC_PAGESIZE);
-    if (page_size_ > 0L) {
-        page_size = (size_t) page_size_;
-    }
-#elif defined(_WIN32)
-    SYSTEM_INFO si;
-    GetSystemInfo(&si);
-    page_size = (size_t) si.dwPageSize;
-#endif
-    if (page_size < CANARY_SIZE) {
-        abort(); /* LCOV_EXCL_LINE */
-    }
-    randombytes_buf(canary, sizeof canary);
-
-    return 0;
-}
-
-static inline size_t
-_page_round(const size_t size)
-{
-    const size_t page_mask = page_size - 1U;
-
-    return (size + page_mask) & ~page_mask;
-}
-
 static int
 _mprotect_noaccess(void *ptr, size_t size)
 {
-#if defined(HAVE_MPROTECT) && defined(HAVE_PAGE_PROTECTION)
+#ifdef HAVE_MPROTECT
     return mprotect(ptr, size, PROT_NONE);
 #elif defined(_WIN32)
-    {
-        DWORD old;
-        return -(VirtualProtect(ptr, size, PAGE_NOACCESS, &old) == 0);
-    }
+    DWORD old;
+    return -(VirtualProtect(ptr, size, PAGE_NOACCESS, &old) == 0);
 #else
     errno = ENOSYS;
     return -1;
@@ -252,13 +245,11 @@ _mprotect_noaccess(void *ptr, size_t size)
 static int
 _mprotect_readonly(void *ptr, size_t size)
 {
-#if defined(HAVE_MPROTECT) && defined(HAVE_PAGE_PROTECTION)
+#ifdef HAVE_MPROTECT
     return mprotect(ptr, size, PROT_READ);
 #elif defined(_WIN32)
-    {
-        DWORD old;
-        return -(VirtualProtect(ptr, size, PAGE_READONLY, &old) == 0);
-    }
+    DWORD old;
+    return -(VirtualProtect(ptr, size, PAGE_READONLY, &old) == 0);
 #else
     errno = ENOSYS;
     return -1;
@@ -268,66 +259,72 @@ _mprotect_readonly(void *ptr, size_t size)
 static int
 _mprotect_readwrite(void *ptr, size_t size)
 {
-#if defined(HAVE_MPROTECT) && defined(HAVE_PAGE_PROTECTION)
+#ifdef HAVE_MPROTECT
     return mprotect(ptr, size, PROT_READ | PROT_WRITE);
 #elif defined(_WIN32)
-    {
-        DWORD old;
-        return -(VirtualProtect(ptr, size, PAGE_READWRITE, &old) == 0);
-    }
+    DWORD old;
+    return -(VirtualProtect(ptr, size, PAGE_READWRITE, &old) == 0);
 #else
     errno = ENOSYS;
     return -1;
 #endif
 }
 
+#ifdef HAVE_ALIGNED_MALLOC
+
 static void
 _out_of_bounds(void)
 {
-#ifdef SIGSEGV
+# ifdef SIGSEGV
     raise(SIGSEGV);
-#elif defined(SIGKILL)
+# elif defined(SIGKILL)
     raise(SIGKILL);
-#endif
+# endif
     abort();
-}  /* LCOV_EXCL_LINE */
+} /* LCOV_EXCL_LINE */
+
+static inline size_t
+_page_round(const size_t size)
+{
+    const size_t page_mask = page_size - 1U;
+
+    return (size + page_mask) & ~page_mask;
+}
 
 static __attribute__((malloc)) unsigned char *
 _alloc_aligned(const size_t size)
 {
     void *ptr;
 
-#ifdef MAP_ANON
+# if defined(MAP_ANON) && defined(HAVE_MMAP)
     if ((ptr = mmap(NULL, size, PROT_READ | PROT_WRITE,
                     MAP_ANON | MAP_PRIVATE | MAP_NOCORE, -1, 0)) == MAP_FAILED) {
         ptr = NULL; /* LCOV_EXCL_LINE */
     } /* LCOV_EXCL_LINE */
-#elif defined(HAVE_POSIX_MEMALIGN)
+# elif defined(HAVE_POSIX_MEMALIGN)
     if (posix_memalign(&ptr, page_size, size) != 0) {
         ptr = NULL; /* LCOV_EXCL_LINE */
     } /* LCOV_EXCL_LINE */
-#elif defined(_WIN32)
+# elif defined(_WIN32)
     ptr = VirtualAlloc(NULL, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-#elif !defined(HAVE_ALIGNED_MALLOC)
-    ptr = malloc(size);
-#else
-# error Bug
-#endif
+# else
+#  error Bug
+# endif
     return (unsigned char *) ptr;
 }
 
 static void
 _free_aligned(unsigned char * const ptr, const size_t size)
 {
-#ifdef MAP_ANON
+# if defined(MAP_ANON) && defined(HAVE_MMAP)
     (void) munmap(ptr, size);
-#elif defined(HAVE_POSIX_MEMALIGN)
+# elif defined(HAVE_POSIX_MEMALIGN)
     free(ptr);
-#elif defined(_WIN32)
+# elif defined(_WIN32)
     VirtualFree(ptr, 0U, MEM_RELEASE);
-#else
-    free(ptr);
-#endif
+# else
+#  error Bug
+# endif
 }
 
 static unsigned char *
@@ -346,6 +343,15 @@ _unprotected_ptr_from_user_ptr(const void *ptr)
     return (unsigned char *) unprotected_ptr_u;
 }
 
+#endif /* HAVE_ALIGNED_MALLOC */
+
+#ifndef HAVE_ALIGNED_MALLOC
+static __attribute__((malloc)) void *
+_sodium_malloc(const size_t size)
+{
+    return malloc(size);
+}
+#else
 static __attribute__((malloc)) void *
 _sodium_malloc(const size_t size)
 {
@@ -357,7 +363,7 @@ _sodium_malloc(const size_t size)
     size_t         total_size;
     size_t         unprotected_size;
 
-    if (size >= SIZE_MAX - page_size * 4U) {
+    if (size >= (size_t) SIZE_MAX - page_size * 4U) {
         errno = ENOMEM;
         return NULL;
     }
@@ -372,9 +378,9 @@ _sodium_malloc(const size_t size)
     }
     unprotected_ptr = base_ptr + page_size * 2U;
     _mprotect_noaccess(base_ptr + page_size, page_size);
-#ifndef HAVE_PAGE_PROTECTION
+# ifndef HAVE_PAGE_PROTECTION
     memcpy(unprotected_ptr + unprotected_size, canary, sizeof canary);
-#endif
+# endif
     _mprotect_noaccess(unprotected_ptr + unprotected_size, page_size);
     sodium_mlock(unprotected_ptr, unprotected_size);
     canary_ptr = unprotected_ptr + _page_round(size_with_canary) -
@@ -387,6 +393,7 @@ _sodium_malloc(const size_t size)
 
     return user_ptr;
 }
+#endif /* !HAVE_ALIGNED_MALLOC */
 
 __attribute__((malloc)) void *
 sodium_malloc(const size_t size)
@@ -406,7 +413,7 @@ sodium_allocarray(size_t count, size_t size)
 {
     size_t total_size;
 
-    if (size >= SIZE_MAX / count) {
+    if (size >= (size_t) SIZE_MAX / count) {
         errno = ENOMEM;
         return NULL;
     }
@@ -415,6 +422,13 @@ sodium_allocarray(size_t count, size_t size)
     return sodium_malloc(total_size);
 }
 
+#ifndef HAVE_ALIGNED_MALLOC
+void
+sodium_free(void *ptr)
+{
+    free(ptr);
+}
+#else
 void
 sodium_free(void *ptr)
 {
@@ -428,24 +442,35 @@ sodium_free(void *ptr)
         return;
     }
     canary_ptr = ((unsigned char *) ptr) - sizeof canary;
-    if (sodium_memcmp(canary_ptr, canary, sizeof canary) != 0) {
-        _out_of_bounds();
-    }
     unprotected_ptr = _unprotected_ptr_from_user_ptr(ptr);
     base_ptr = unprotected_ptr - page_size * 2U;
     memcpy(&unprotected_size, base_ptr, sizeof unprotected_size);
     total_size = page_size + page_size + unprotected_size + page_size;
     _mprotect_readwrite(base_ptr, total_size);
-#ifndef HAVE_PAGE_PROTECTION
+    if (sodium_memcmp(canary_ptr, canary, sizeof canary) != 0) {
+        _out_of_bounds();
+    }
+# ifndef HAVE_PAGE_PROTECTION
     if (sodium_memcmp(unprotected_ptr + unprotected_size,
                       canary, sizeof canary) != 0) {
         _out_of_bounds();
     }
-#endif
+# endif
     sodium_munlock(unprotected_ptr, unprotected_size);
     _free_aligned(base_ptr, total_size);
 }
+#endif /* HAVE_ALIGNED_MALLOC */
 
+#ifndef HAVE_PAGE_PROTECTION
+static int
+_sodium_mprotect(void *ptr, int (*cb)(void *ptr, size_t size))
+{
+    (void) ptr;
+    (void) cb;
+    errno = ENOSYS;
+    return -1;
+}
+#else
 static int
 _sodium_mprotect(void *ptr, int (*cb)(void *ptr, size_t size))
 {
@@ -459,6 +484,7 @@ _sodium_mprotect(void *ptr, int (*cb)(void *ptr, size_t size))
 
     return cb(unprotected_ptr, unprotected_size);
 }
+#endif
 
 int
 sodium_mprotect_noaccess(void *ptr)

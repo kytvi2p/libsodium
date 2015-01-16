@@ -1,3 +1,166 @@
+libsodium (1.0.2-1) unstable; urgency=medium
+
+  [ Andre Caron ]
+  * Changes DLL_EXPORT to SODIUM_DLL_EXPORT.
+
+  [ Frank Denis ]
+  * DLL_EXPORT -> SODIUM_DLL_EXPORT
+  * SIGSEGV handlers are incompatible with -fsanitize=address
+  * Credit CodesInChaos
+  * Update ChangeLog
+  * Explicit int32 -> int64 conversions
+
+  [ Phillip Mienk ]
+  * Prevent first-run ./autogen.sh error due to ltmain.sh absence.
+
+  [ Frank Denis ]
+  * Check that -D_FORTIFY_SOURCE=2 doesn't trigger a compiler bug
+
+  [ evoskuil ]
+  * Fix integer narrowing warnings in tests.
+  * Revert changes to common props.
+  * Bump VS dll resource version to 1.0.1.0
+  * Add/remove tests from VS test projects.
+  * Update NuGet packaging for 1.0.0.0 release (last published).
+
+  [ Frank Denis ]
+  * + Loic Maury for Dylium
+  * curve25519-donna-c64: don't read an extra byte when expanding a 32-byte
+    number into polynomial form Reported by Michael Holmwood.
+  * C++ compat
+  * curve25519-donna-c64: replace U8TO64/U64TO8 with load_limb/store_limb To
+    match the current @agl code.
+  * curve25519-donna-c64: use limb instead of uint64_t everywhere for consistency
+  * Revert "Fix integer narrowing warnings in tests."
+  * Update ChangeLog
+  * Tests: use explicit casts when shortening types
+  * Add explicit size_t conversions.
+  * iOS: add -miphoneos-version-min
+
+  [ Jens Mueller ]
+  * fix building visual studio projects within a path containing white spaces
+
+  [ Frank Denis ]
+  * Fail if JS crypto is not available. Emscripten registers /dev/urandom and
+    /dev/random by default, but falls back to Math.random()*256 when
+    crypto.getRandomValues() is not available, which is not acceptable. So we
+    need to re-register them no matter what.
+  * Do not use "=" with "--" options
+  * pre.js: unlink /dev/(u)random before re-registering them
+  * Skip mlock/mprotect/explicit_bzero when using Emscripten
+  * Don't assume that madvise() is available even if related macros are defined.
+  * Mount the current dir as /test-data (nodefs) for testing Javascript code
+  * Change EXEEXT to .js for Emscripten
+  * Correct /test-data mount point
+  * Don't export the JS function names in LDFLAGS.
+  * Zero the subkey in {stream,xor}_xsalsa20 Spotted by Michael Rogers.
+  * Check if mmap(2) works, not just the presence of MAP_ANON In particular,
+    mmap(2) doesn't return an aligner pointer on Emscripten.
+  * AC_FUNC_MMAP assumes that mmap(2) is not available when cross-compiling
+    except on GNU systems. Just check for function presence instead.
+  * Include the test pre.js script only for tests.
+  * Don't expect signals to work in Javascript
+  * Make 'make check' actually run the tests on Emscripten.
+  * Ignore *.mem
+  * If -fno-strict-overflow is available, don't add -fwrapv
+  * Remove unused and shadowed global
+  * Add extra assert() in tests allocating memory on the heap.
+  * Always generate libsodium.pc
+  * Thanks @jlouis for ENaCl
+  * Emscripten: update the list of exported functions
+  * sodium_utils2 and sodium_utils3 cannot work in Javascript; this is expected.
+  * Remove obsolete, undocumented compatibility layer with Sodium 0.5
+  * Exporting crypto_box and crypto_secretbox doesn't make sense in Javascript.
+  * Ship android-armv7.sh
+  * The node binary was renamed nodejs on Ubuntu.
+  * Make sodium_free() callable even if protection is PROT_NONE. Reported by
+    @stouset, thanks!
+  * We can still directly call _mprotect_readwrite() instead of the high-level
+    function.
+
+  [ Jack Wink ]
+  * update iOS build script to include arm64 and current OSX machine arch
+
+  [ Frank Denis ]
+  * Use the same options on OSX and iOS
+  * Cleanup -> make distclean
+  * Use make distclean for cleanup; tell the user where it's been installed
+  * Make the output more readable
+  * dist-build/ios: remove existing headers
+  * If the OSX code in ios.sh is just for the simulator, using -Oz is fine
+  * Display what the fat library contains
+  * Since we're compiling for OSX, run the test suite.
+
+  [ clowwindy ]
+  * fix typo
+  * build both i386 and x86_64 for iOS simulator
+
+  [ Frank Denis ]
+  * We always need a page size
+  * We always need to allocate aligned memory
+  * Compile for armv7s
+  * Use guarded memory for the box_easy/box_detached tests.
+  * C++ compat
+  * + Eric Dong
+  * Warn that libtool might fail if the build directory contains whitespaces
+
+  [ Graydon Hoare ]
+  * Add libsodium-uninstalled.pc.in
+
+  [ Frank Denis ]
+  * Discourage use of --enable-blocking-random
+  * Retry if open(2) is interrupted; set the CLOEXEC flag as well. Also retry
+    if read(2) returns EAGAIN. This shouldn't happen in blocking mode, but it
+    can't hurt either.
+  * Make IPHONEOS_VERSION_MIN overridable
+  * Use relative paths in sodium.h This make it easier to use sodium when bundled with another project.
+
+  [ Jack Wink ]
+  * change '-pie' to '-Wl,-pie' to squash clang errors
+  * check to see if '-Wl,-pie' is supported before using it
+  * a second stab at detecting valid linker flags
+  * remove extra pie check
+
+  [ Frank Denis ]
+  * Let crypto_sign_open() accept NULL for the message length pointer Ditto
+    for edwards25519sha512batch for consistency Add a _p suffix to lengths
+    that are actually pointers for clarity
+  * Let sodium_malloc() and friends work on systems without protected memory.
+  * Thanks @harleqin (Lisp CFFI bindings)
+  * 2015
+  * Wipe the shared key in crypto_box() and crypto_secretbox() The _easy and _detached interfaces already did this.
+  * Missing #include for sodium_memzero()
+  * Indentation
+  * + precomputed interface for crypto_box()
+  * Export the precomputed interface to emscripten
+  * Move prototypes of functions requiring padding together
+  * Add new tests for the crypto_box_*() precomputed interface
+  * Ignore Vagrantfile
+  * Version bump
+  * Update ChangeLog
+  * Mention that sodium_alloc() can be used with sodium data structures And
+    explain how to deal with crypto_generichash_state
+  * Error checking
+  * Wipe the last salsa20 block in the reduced rounds versions
+  * Sync reduced rounds versions of salsa20 with supercop
+  * chacha20: counting the remaining bytes in a block doesn't require ULL
+  * Use io.js instead of node, if available.
+  * Remove quotes, add version for the Coverity-Travis integration
+  * Test crypto_sign_open() with NULL as a pointer to the message size
+  * msvc version bump
+  * Proper overlapping check; memmove() was called when it was superfluous.
+  * Move macros up
+  * Emscripten: add a file to mark that the build completed, for libsodium.js
+  * Skip sodium_utils{2,3} tests when the target is Javascript
+  * Abort if the JS tests don't pass
+  * Test crypto_box[_open]_easy_afternm() with short and overflowing lengths
+  * Revert 17932c782e5900ac8cee42fe43e3455db85351e0 It broke compilation on OpenBSD.
+
+  [ Kill Your TV ]
+  * New upstream git release
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Fri, 16 Jan 2015 00:33:34 +0000
+
 libsodium (1.0.1-1~deb7u+1) stable; urgency=medium
 
   * Backport to Wheezy
