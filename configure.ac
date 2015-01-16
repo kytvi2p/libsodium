@@ -1,8 +1,9 @@
 AC_PREREQ([2.65])
-AC_INIT([libsodium],[1.0.1],
+AC_INIT([libsodium],[1.0.2],
   [https://github.com/jedisct1/libsodium/issues],
   [libsodium],
   [https://github.com/jedisct1/libsodium])
+AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/libsodium/sodium/version.c])
 AC_CANONICAL_HOST
@@ -16,9 +17,9 @@ ISODATE=`date +%Y-%m-%d`
 AC_SUBST(ISODATE)
 
 SODIUM_LIBRARY_VERSION_MAJOR=7
-SODIUM_LIBRARY_VERSION_MINOR=3
+SODIUM_LIBRARY_VERSION_MINOR=4
 DLL_VERSION=6
-SODIUM_LIBRARY_VERSION=13:3:0
+SODIUM_LIBRARY_VERSION=14:0:1
 #                       | | |
 #                +------+ | +---+
 #                |        |     |
@@ -36,6 +37,12 @@ AC_SUBST(SODIUM_LIBRARY_VERSION)
 AC_SUBST(DLL_VERSION)
 
 LX_CFLAGS=${CFLAGS-NONE}
+
+dnl Path check
+
+AS_IF([test pwd | fgrep ' ' > /dev/null 2>&1],
+  [AC_MSG_WARN([The build directory contains whitespaces - This can cause tests/installation to fail due to limitations of some libtool versions])]
+)
 
 dnl Switches
 
@@ -77,10 +84,10 @@ AC_ARG_ENABLE(pie,
 AS_CASE([$host_os], [mingw*|cygwin*|msys], [enable_pie="no"])
 
 AC_ARG_ENABLE(blocking-random,
-[AS_HELP_STRING(--enable-blocking-random,Use /dev/random instead of /dev/urandom)],
+[AS_HELP_STRING(--enable-blocking-random,Enable this switch only if /dev/urandom is totally broken on the target platform)],
 [
   AS_IF([test "x$enableval" = "xyes"], [
-    AC_DEFINE([USE_BLOCKING_RANDOM], [1], [Use blocking random])
+    AC_DEFINE([USE_BLOCKING_RANDOM], [1], [/dev/urandom is insecure on the target platform])
   ])
 ])
 
@@ -135,7 +142,9 @@ dnl Checks
 AC_PROG_CC_C99
 AM_PROG_AS
 AC_USE_SYSTEM_EXTENSIONS
-CPPFLAGS="$CPPFLAGS -D_FORTIFY_SOURCE=2"
+
+AX_CHECK_COMPILE_FLAG([-D_FORTIFY_SOURCE=2],
+  [CPPFLAGS="$CPPFLAGS -D_FORTIFY_SOURCE=2"])
 
 AX_CHECK_COMPILE_FLAG([-fvisibility=hidden],
   [CFLAGS="$CFLAGS -fvisibility=hidden"])
@@ -158,9 +167,10 @@ AS_IF([test "$enable_pie" != "no"],[
   ])
 ])
 
-AX_CHECK_COMPILE_FLAG([-fwrapv], [CFLAGS="$CFLAGS -fwrapv"])
 AX_CHECK_COMPILE_FLAG([-fno-strict-aliasing], [CFLAGS="$CFLAGS -fno-strict-aliasing"])
-AX_CHECK_COMPILE_FLAG([-fno-strict-overflow], [CFLAGS="$CFLAGS -fno-strict-overflow"])
+AX_CHECK_COMPILE_FLAG([-fno-strict-overflow], [CFLAGS="$CFLAGS -fno-strict-overflow"], [
+  AX_CHECK_COMPILE_FLAG([-fwrapv], [CFLAGS="$CFLAGS -fwrapv"])
+])
 
 LIBTOOL_OLD_FLAGS="$LIBTOOL_EXTRA_FLAGS"
 LIBTOOL_EXTRA_FLAGS="$LIBTOOL_EXTRA_FLAGS -version-info $SODIUM_LIBRARY_VERSION"
@@ -404,10 +414,19 @@ dnl Checks for functions and headers
 
 AS_IF([test "x$EMSCRIPTEN" = "x"],[
   AC_CHECK_FUNCS([arc4random arc4random_buf])
+  AC_CHECK_FUNCS([mmap mlock madvise mprotect explicit_bzero])
 ])
-AC_CHECK_FUNCS([mlock mprotect explicit_bzero posix_memalign])
+AC_CHECK_FUNCS([posix_memalign])
 
 AC_SUBST([LIBTOOL_EXTRA_FLAGS])
+
+TEST_LDFLAGS=''
+AS_IF([test "x$EMSCRIPTEN" != "x"],[
+  EXEEXT=.js
+  TEST_LDFLAGS='--pre-js pre.js.inc'
+])
+AC_SUBST(TEST_LDFLAGS)
+AM_CONDITIONAL([EMSCRIPTEN], [test "x$EMSCRIPTEN" != "x"])
 
 dnl Libtool.
 
@@ -422,11 +441,10 @@ AH_VERBATIM([NDEBUG], [/* Always evaluate assert() calls */
 #/**/undef/**/ NDEBUG
 #endif])
 
-AS_IF([test "x$PKG_CONFIG" != "x"], [
-  AC_CONFIG_FILES([libsodium.pc])
-])
 AC_CONFIG_FILES([Makefile
                  dist-build/Makefile
+                 libsodium.pc
+                 libsodium-uninstalled.pc
                  msvc-scripts/Makefile
                  src/Makefile
                  src/libsodium/Makefile

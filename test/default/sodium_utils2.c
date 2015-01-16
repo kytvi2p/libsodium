@@ -7,6 +7,10 @@
 #define TEST_NAME "sodium_utils2"
 #include "cmptest.h"
 
+#ifdef __SANITIZE_ADDRESS__
+# error This test requires address sanitizer to be off
+#endif
+
 static void segv_handler(int sig)
 {
     printf("Intentional segfault / bus error caught\n");
@@ -44,8 +48,9 @@ int main(void)
     for (i = 0U; i < 10000U; i++) {
         size = randombytes_uniform(100000U);
         buf = sodium_malloc(size);
+        assert(buf != NULL);
         memset(buf, i, size);
-        sodium_mprotect_readonly(buf);
+        sodium_mprotect_noaccess(buf);
         sodium_free(buf);
     }
     printf("OK\n");
@@ -61,12 +66,14 @@ int main(void)
 #endif
     size = randombytes_uniform(100000U);
     buf = sodium_malloc(size);
+    assert(buf != NULL);
     sodium_mprotect_readonly(buf);
     sodium_mprotect_readwrite(buf);
+#ifndef __EMSCRIPTEN__
     sodium_memzero(((unsigned char *)buf) + size, 1U);
     sodium_mprotect_noaccess(buf);
     sodium_free(buf);
     printf("Overflow not caught\n");
-
+#endif
     return 0;
 }
