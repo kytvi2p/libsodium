@@ -1,3 +1,139 @@
+libsodium (1.0.3-1) unstable; urgency=medium
+
+  [ Martin Hamrle ]
+  * Use bash for NDK make toolchain
+
+  [ Frank Denis ]
+  * Decapitalize
+  * Emscripten: reserve space for 8 function pointers
+  * Export _crypto_pwhash_scryptsalsa208sha256_ll
+  * Do not export sysrandom symbols on Emscripten
+  * Reserve slots for function pointers
+  * Do not require /dev/urandom emulation in Javascript any more.
+  * Move conditionals
+  * Emscripten: don't use a memory init file any more. It doesn't take that
+    long to load the module, and it's going to make users' life way easier.
+  * Do not require /dev/urandom emulation in Javascript any more.
+  * Emscripten: don't use a memory init file any more. It doesn't take that
+    long to load the module, and it's going to make users' life way easier.
+  * No browser, no filesystem support required
+  * Running the JS tests requires the filesystem.
+  * Do not hardcode the node binary
+  * Re-add filesystem support for the library
+  * randombytes_random() is 32 bits, even in JS.
+  * Factorize randombytes_uniform() Don't require randombytes implementations
+    to reimplement this. NULL can be passed instead of a function pointer to
+    use the default implementation. Allow NULL for randombytes_stir() and
+    randombytes_close() as well.
+  * Mention what is optional and what is required for a randombytes
+    implementation
+  * || -> | spotted by Ahmad
+  * Invert #if[n]def __EMSCRIPTEN__ logic, put more common case first
+  * Add an extra test for randombytes
+  * strcmp() with optimization level > 1 is broken on Emscripten (!) Trivial
+    workaround that should eventually go to the quirks file until this is
+    fixed in Emscripten.
+  * quirks\windows\windows-quirks.h -> quirks\quirks.h
+  * Move quirks inclusion to cmptest.h, emscsripten quirks to quirks.h
+  * Add crypto_generichash_statebytes() sizeof() is not always an option when
+    accessing the library from other languages.
+  * + crypto_generichash_statebytes()
+  * Import moved quirks.h
+  * + crypto_hash_sha(256|512)_statebytes
+  * Suggest crypto_generichash_statebytes() instead of sizeof()
+  * Add statebytes for crypto_hmac_*
+  * Export _crypto_generichash_statebytes()
+  * Update ChangeLog
+  * Thanks @zonyitoo for libsodium-sys (rust native bindings) and OVH
+  * (p1 - p2 == 0) => (p1 == p2) No binary changes on supported platforms
+    except on gcc/armv7l where the control flow remains identical but
+    permutative statements get switched.
+
+  [ Graydon Hoare ]
+  * Add configure.lineno to .gitignore
+
+  [ Frank Denis ]
+  * Disable PIE on Android
+  * Add a test for crypto_stream_salsa20_xor_ic()
+  * Add crypto_stream_xsalsa20_ic()
+  * Update ChangeLog
+
+  [ mosin ]
+  * android ndk requires arch to be arm not armv7
+
+  [ Frank Denis ]
+  * Revert "Disable PIE on Android" This reverts commit
+    cdf863c7312d7f3cc359312bb7ea4892f1c06d74.
+  * Don't build arm and armv7 android targets in the same directory
+  * android-mips -> android-mips32
+  * Android: Use app platform 18
+  * armv7 -> armv7-a
+  * Spacing
+  * Remove useless comment
+  * crypto_sign_detached(): no need to store a copy of the public key on the
+    stack
+  * Constant-time hex2bin.
+  * Update ChangeLog
+  * Make bin2hex() code consistent with hex2bin()
+  * scrypt: corrected pointer alias issues causing scrypt to fail on MIPS64 by
+    jfoug <jfoug at cox.net> via JtR issue #1032
+  * scrypt: keep r as a size_t value
+  * Compare size_t values with ULL
+  * __declspec() / __attribute__(()) shouldn't come before "typedef"
+  * Use proper nonce length now that's it's a pointer in box_easy2 test.
+  * Indentation
+  * Indentation
+  * Use getrandom(2) on Linux, if available.
+  * Android: Use app platform 21
+  * Update ChangeLog
+  * Don't divide by zero if sodium_allocarray() is called with count=0
+  * Add a test for sodium_allocarray(0, x)
+  * Better separation between crypto_auth[_verify] and the NIST-like API.
+  * + crypto_box_seal()
+  * Update ChangeLog
+  * Slightly revamp dist-build/ios.sh - Compile arm32 and arm64 targets
+    separately - Compile for the iOS simulator
+  * Let dist-build/ios.sh compile only for iOS and the iOS emulator.
+  * + simple OSX build script
+  * JS target: window.crypto is not defined in webworkers; use self.crypto
+    instead.
+  * Add missing tests to the Visual Studio solutions
+  * salsa20_random_buf(): mix the output size with the key
+  * Use memcpy() instead of ugly casts. No changes to compiled code.
+  * Turn ASAN errors into warnings in sodium_utils{2,3} tests
+  * Add missing Visual Studio filters for recent tests
+  * Remove resource.h/resource.rc
+  * Version bump
+
+  [ woobs ]
+  * Update NuGet configuration for version 1.0.3
+
+  [ Frank Denis ]
+  * Remove package.nuspec, package.targets, and package.xml
+  * Use sodium_malloc() in the pwhash test.
+  * Add solution for vs2015
+  * Don't downcast size_t to int
+  * Use correct ToolsVersion in the vc2015 proejct
+  * VC2012 ToolsVersion is 12.0
+
+  [ Shannen Saez ]
+  * Use https when linking where possible.
+
+  [ Frank Denis ]
+  * Update ChangeLog
+  * Update version for Coverity
+  * Rename arguments for consistency
+  * Also zero the public key and nonce after encryption in crypto_box_seal()
+  * Add tests for custom randombytes_uniform. Check for
+    crypto_auth_hmacsha512256_statebytes() presence.
+  * crypto_box_keypair() cannot fail - Add lcov exclusion.
+
+  [ Kill Your TV ]
+  * New upstream release
+  * Update debian/libsodium13.symbols
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Sat, 09 May 2015 22:26:19 +0000
+
 libsodium (1.0.2-1) unstable; urgency=medium
 
   [ Andre Caron ]

@@ -14,6 +14,7 @@ libsodium.so.13 libsodium13 #MINVER#
  crypto_auth_hmacsha256_final@Base 0.7.1
  crypto_auth_hmacsha256_init@Base 0.7.1
  crypto_auth_hmacsha256_keybytes@Base 0.7.1
+ crypto_auth_hmacsha256_statebytes@Base 1.0.3
  crypto_auth_hmacsha256_update@Base 0.7.1
  crypto_auth_hmacsha256_verify@Base 0.7.1
  crypto_auth_hmacsha512256@Base 0.7.1
@@ -21,6 +22,7 @@ libsodium.so.13 libsodium13 #MINVER#
  crypto_auth_hmacsha512256_final@Base 0.7.1
  crypto_auth_hmacsha512256_init@Base 0.7.1
  crypto_auth_hmacsha512256_keybytes@Base 0.7.1
+ crypto_auth_hmacsha512256_statebytes@Base 1.0.3
  crypto_auth_hmacsha512256_update@Base 0.7.1
  crypto_auth_hmacsha512256_verify@Base 0.7.1
  crypto_auth_hmacsha512@Base 0.7.1
@@ -28,6 +30,7 @@ libsodium.so.13 libsodium13 #MINVER#
  crypto_auth_hmacsha512_final@Base 0.7.1
  crypto_auth_hmacsha512_init@Base 0.7.1
  crypto_auth_hmacsha512_keybytes@Base 0.7.1
+ crypto_auth_hmacsha512_statebytes@Base 1.0.3
  crypto_auth_hmacsha512_update@Base 0.7.1
  crypto_auth_hmacsha512_verify@Base 0.7.1
  crypto_auth_keybytes@Base 0.7.1
@@ -54,16 +57,23 @@ libsodium.so.13 libsodium13 #MINVER#
  crypto_box_curve25519xsalsa20poly1305_seedbytes@Base 0.7.1
  crypto_box_curve25519xsalsa20poly1305_zerobytes@Base 0.7.1
  crypto_box_detached@Base 0.7.1
+ crypto_box_detached_afternm@Base 1.0.3
  crypto_box_easy@Base 0.7.1
+ crypto_box_easy_afternm@Base 1.0.3
  crypto_box_keypair@Base 0.7.1
  crypto_box_macbytes@Base 0.7.1
  crypto_box_noncebytes@Base 0.7.1
  crypto_box_open@Base 0.7.1
  crypto_box_open_afternm@Base 0.7.1
  crypto_box_open_detached@Base 0.7.1
+ crypto_box_open_detached_afternm@Base 1.0.3
  crypto_box_open_easy@Base 0.7.1
+ crypto_box_open_easy_afternm@Base 1.0.3
  crypto_box_primitive@Base 0.7.1
  crypto_box_publickeybytes@Base 0.7.1
+ crypto_box_seal@Base 1.0.3
+ crypto_box_seal_open@Base 1.0.3
+ crypto_box_sealbytes@Base 1.0.3
  crypto_box_secretkeybytes@Base 0.7.1
  crypto_box_seed_keypair@Base 0.7.1
  crypto_box_seedbytes@Base 0.7.1
@@ -112,6 +122,7 @@ libsodium.so.13 libsodium13 #MINVER#
  crypto_generichash_keybytes_max@Base 0.7.1
  crypto_generichash_keybytes_min@Base 0.7.1
  crypto_generichash_primitive@Base 0.7.1
+ crypto_generichash_statebytes@Base 1.0.3
  crypto_generichash_update@Base 0.7.1
  crypto_hash@Base 0.7.1
  crypto_hash_bytes@Base 0.7.1
@@ -120,11 +131,13 @@ libsodium.so.13 libsodium13 #MINVER#
  crypto_hash_sha256_bytes@Base 0.7.1
  crypto_hash_sha256_final@Base 0.7.1
  crypto_hash_sha256_init@Base 0.7.1
+ crypto_hash_sha256_statebytes@Base 1.0.3
  crypto_hash_sha256_update@Base 0.7.1
  crypto_hash_sha512@Base 0.7.1
  crypto_hash_sha512_bytes@Base 0.7.1
  crypto_hash_sha512_final@Base 0.7.1
  crypto_hash_sha512_init@Base 0.7.1
+ crypto_hash_sha512_statebytes@Base 1.0.3
  crypto_hash_sha512_update@Base 0.7.1
  crypto_onetimeauth@Base 0.7.1
  crypto_onetimeauth_bytes@Base 0.7.1
@@ -141,6 +154,7 @@ libsodium.so.13 libsodium13 #MINVER#
  crypto_onetimeauth_poly1305_update@Base 0.7.1
  crypto_onetimeauth_poly1305_verify@Base 0.7.1
  crypto_onetimeauth_primitive@Base 0.7.1
+ crypto_onetimeauth_statebytes@Base 1.0.3
  crypto_onetimeauth_update@Base 0.7.1
  crypto_onetimeauth_verify@Base 0.7.1
  crypto_pwhash_scryptsalsa208sha256@Base 0.7.1
@@ -255,6 +269,7 @@ libsodium.so.13 libsodium13 #MINVER#
  crypto_stream_xsalsa20_keybytes@Base 0.7.1
  crypto_stream_xsalsa20_noncebytes@Base 0.7.1
  crypto_stream_xsalsa20_xor@Base 0.7.1
+ crypto_stream_xsalsa20_xor_ic@Base 1.0.3
  crypto_verify_16@Base 0.7.1
  crypto_verify_16_bytes@Base 0.7.1
  crypto_verify_32@Base 0.7.1
@@ -272,7 +287,7 @@ libsodium.so.13 libsodium13 #MINVER#
  randombytes_salsa20_random_buf@Base 0.7.1
  randombytes_salsa20_random_close@Base 0.7.1
  randombytes_salsa20_random_stir@Base 0.7.1
- randombytes_salsa20_random_uniform@Base 0.7.1
+#MISSING: 1.0.3-1# randombytes_salsa20_random_uniform@Base 0.7.1
  randombytes_set_implementation@Base 0.7.1
  randombytes_stir@Base 0.7.1
  randombytes_sysrandom@Base 0.7.1
@@ -281,7 +296,7 @@ libsodium.so.13 libsodium13 #MINVER#
  randombytes_sysrandom_implementation@Base 0.7.1
  randombytes_sysrandom_implementation_name@Base 0.7.1
  randombytes_sysrandom_stir@Base 0.7.1
- randombytes_sysrandom_uniform@Base 0.7.1
+#MISSING: 1.0.3-1# randombytes_sysrandom_uniform@Base 0.7.1
  randombytes_uniform@Base 0.7.1
  sodium_allocarray@Base 0.7.1
  sodium_bin2hex@Base 0.7.1
