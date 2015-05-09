@@ -18,6 +18,7 @@ libsodium_la_SOURCES = \
 	crypto_auth/hmacsha512256/cp/verify_hmacsha512256.c \
 	crypto_box/crypto_box.c \
 	crypto_box/crypto_box_easy.c \
+	crypto_box/crypto_box_seal.c \
 	crypto_box/curve25519xsalsa20poly1305/box_curve25519xsalsa20poly1305_api.c \
 	crypto_box/curve25519xsalsa20poly1305/ref/api.h \
 	crypto_box/curve25519xsalsa20poly1305/ref/after_curve25519xsalsa20poly1305.c \
@@ -149,12 +150,16 @@ libsodium_la_SOURCES = \
 	crypto_verify/64/ref/api.h \
 	crypto_verify/64/ref/verify_64.c \
 	randombytes/randombytes.c \
-	randombytes/salsa20/randombytes_salsa20_random.c \
-	randombytes/sysrandom/randombytes_sysrandom.c \
 	sodium/core.c \
 	sodium/runtime.c \
 	sodium/utils.c \
 	sodium/version.c
+
+if !EMSCRIPTEN
+libsodium_la_SOURCES += \
+	randombytes/salsa20/randombytes_salsa20_random.c \
+	randombytes/sysrandom/randombytes_sysrandom.c
+endif
 
 if HAVE_TI_MODE
 libsodium_la_SOURCES += \

@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "sodium.h"
+#include "quirks.h"
 
 #ifdef __EMSCRIPTEN__
 # undef TEST_SRCDIR

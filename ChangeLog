@@ -1,10 +1,29 @@
 
+* Version 1.0.3
+ - In addition to sodium_bin2hex(), sodium_hex2bin() is now a
+constant-time function.
+ - crypto_stream_xsalsa20_ic() has been added.
+ - crypto_generichash_statebytes(), crypto_auth_*_statebytes() and
+crypto_hash_*_statebytes() have been added in order to retrieve the
+size of structures keeping states from foreign languages.
+ - The JavaScript target doesn't require /dev/urandom or an external
+randombytes() implementation any more. Other minor Emscripten-related
+improvements have been made in order to support libsodium.js
+ - Custom randombytes implementations do not need to provide their own
+implementation of randombytes_uniform() any more. randombytes_stir()
+and randombytes_close() can also be NULL pointers if they are not
+required.
+ - On Linux, getrandom(2) is being used instead of directly accessing
+/dev/urandom, if the kernel supports this system call.
+ - crypto_box_seal() and crypto_box_seal_open() have been added.
+ - A solutions for Visual Studio 2015 was added.
+
 * Version 1.0.2
  - The _easy and _detached APIs now support precalculated keys;
 crypto_box_easy_afternm(), crypto_box_open_easy_afternm(),
 crypto_box_detached_afternm() and crypto_box_open_detached_afternm()
 have been added as an alternative to the NaCl interface.
- - Memory allocation functions can now be used on Operating systems with
+ - Memory allocation functions can now be used on operating systems with
 no memory protection.
  - crypto_sign_open() and crypto_sign_edwards25519sha512batch_open()
 now accept a NULL pointer instead of a pointer to the message size, if
