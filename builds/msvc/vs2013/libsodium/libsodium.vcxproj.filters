@@ -460,6 +460,9 @@
     <ClCompile Include="..\..\..\..\src\libsodium\crypto_box\crypto_box_easy.c">
       <Filter>src\crypto_box</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\libsodium\crypto_box\crypto_box_seal.c">
+      <Filter>src\crypto_box</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\src\libsodium\crypto_secretbox\crypto_secretbox_easy.c">
       <Filter>src\crypto_secretbox</Filter>
     </ClCompile>
@@ -742,14 +745,6 @@
     <ClInclude Include="..\..\..\..\src\libsodium\include\sodium\crypto_aead_chacha20poly1305.h">
       <Filter>include\sodium</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\resource.h">
-      <Filter>resource</Filter>
-    </ClInclude>
-    <ResourceCompile Include="..\..\resource.rc">
-      <Filter>resource</Filter>
-    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\..\packaging\nuget\package.bat">
