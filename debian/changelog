@@ -1,3 +1,9 @@
+libsodium (1.0.3-1~deb8u+rpi) stable; urgency=medium
+
+  * Build for Raspberry Pi
+
+ -- Kill Your TV <killyourtv@i2pmail.org>  Sun, 10 May 2015 09:36:55 +0000
+
 libsodium (1.0.3-1~deb8u+1) stable; urgency=medium
 
   * Backport to Jessie
